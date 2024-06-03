@@ -105,7 +105,6 @@
 <body>
   <div class="container">
     <h1 class="my-4">產品列表</h1>
-
     <div class="d-flex justify-content-end">
       <!-- 分頁 -->
       <nav class="me-2">
@@ -163,10 +162,6 @@
         </div>
       <?php endforeach; ?>
     </div>
-
-
   </div>
-
 </body>
-
 </html>
