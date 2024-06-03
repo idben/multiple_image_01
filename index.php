@@ -1,45 +1,45 @@
 <?php
-include 'PDO_connect.php';
+  include 'PDO_connect.php';
 
-// 每頁顯示的記錄數
-$limit = 10;
+  // 每頁顯示的記錄數
+  $limit = 10;
 
-// 當前頁碼
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-$start = ($page - 1) * $limit;
+  // 當前頁碼
+  $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+  $start = ($page - 1) * $limit;
 
-// 設定排序字段和順序
-$valid_columns = ['id', 'start_date', 'end_date'];
-$sort_column = isset($_GET['sort_by']) && in_array($_GET['sort_by'], $valid_columns) ? $_GET['sort_by'] : 'id';
-$sort_order = isset($_GET['sort_order']) && $_GET['sort_order'] === 'desc' ? 'desc' : 'asc';
-$next_sort_order = $sort_order === 'asc' ? 'desc' : 'asc';
+  // 設定排序字段和順序
+  $valid_columns = ['id', 'start_date', 'end_date'];
+  $sort_column = isset($_GET['sort_by']) && in_array($_GET['sort_by'], $valid_columns) ? $_GET['sort_by'] : 'id';
+  $sort_order = isset($_GET['sort_order']) && $_GET['sort_order'] === 'desc' ? 'desc' : 'asc';
+  $next_sort_order = $sort_order === 'asc' ? 'desc' : 'asc';
 
-// 設定篩選條件
-$filter = isset($_GET['filter']) ? $_GET['filter'] : 'all';
+  // 設定篩選條件
+  $filter = isset($_GET['filter']) ? $_GET['filter'] : 'all';
 
-// 根據篩選條件獲取總記錄數
-$filter_query = "";
-if ($filter === 'active') {
-  $filter_query = "WHERE end_date IS NULL OR end_date > NOW()";
-} elseif ($filter === 'expired') {
-  $filter_query = "WHERE end_date IS NOT NULL AND end_date <= NOW()";
-} elseif ($filter === 'permanent') {
-  $filter_query = "WHERE end_date IS NULL";
-}
+  // 根據篩選條件獲取總記錄數
+  $filter_query = "";
+  if ($filter === 'active') {
+    $filter_query = "WHERE end_date IS NULL OR end_date > NOW()";
+  } elseif ($filter === 'expired') {
+    $filter_query = "WHERE end_date IS NOT NULL AND end_date <= NOW()";
+  } elseif ($filter === 'permanent') {
+    $filter_query = "WHERE end_date IS NULL";
+  }
 
-$sql = "SELECT COUNT(*) FROM cosmetic $filter_query";
-$stmt = $pdo->prepare($sql);
-$stmt->execute();
-$total_results = $stmt->fetchColumn();
-$total_pages = ceil($total_results / $limit);
+  $sql = "SELECT COUNT(*) FROM cosmetic $filter_query";
+  $stmt = $pdo->prepare($sql);
+  $stmt->execute();
+  $total_results = $stmt->fetchColumn();
+  $total_pages = ceil($total_results / $limit);
 
-// 根據篩選條件獲取資料
-$sql = "SELECT * FROM cosmetic $filter_query ORDER BY $sort_column $sort_order LIMIT :start, :limit";
-$stmt = $pdo->prepare($sql);
-$stmt->bindParam(':start', $start, PDO::PARAM_INT);
-$stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
-$stmt->execute();
-$products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  // 根據篩選條件獲取資料
+  $sql = "SELECT * FROM cosmetic $filter_query ORDER BY $sort_column $sort_order LIMIT :start, :limit";
+  $stmt = $pdo->prepare($sql);
+  $stmt->bindParam(':start', $start, PDO::PARAM_INT);
+  $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+  $stmt->execute();
+  $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
